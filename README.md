@@ -66,4 +66,7 @@ The application does not include:
 
 ## Author
 
-Smart Pantry Manager – Mobile App Development 700
+Name: Ayanda Abraham Madonsela
+Student Number: 402310343
+Module: Mobile App Development 700
+Project: Smart Pantry Manager
