@@ -1,5 +1,6 @@
 package com.example.smartpantrymanager.ui;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class IngredientAdapter
         return new IngredientViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(
             @NonNull IngredientViewHolder holder,
@@ -67,6 +69,13 @@ public class IngredientAdapter
         holder.txtIngredientQuantity.setText(
                 "Quantity: " + ingredient.getQuantity()
         );
+
+        holder.btnEdit.setOnClickListener(v -> {
+
+            if (listener != null) {
+                listener.onEdit(ingredient);
+            }
+        });
 
         holder.btnDelete.setOnClickListener(v -> {
 
@@ -88,6 +97,7 @@ public class IngredientAdapter
         return ingredientList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateList(
             List<Ingredient> newList) {
 
@@ -101,6 +111,7 @@ public class IngredientAdapter
 
         TextView txtIngredientName;
         TextView txtIngredientQuantity;
+        Button btnEdit;
         Button btnDelete;
 
         public IngredientViewHolder(
@@ -116,6 +127,11 @@ public class IngredientAdapter
             txtIngredientQuantity =
                     itemView.findViewById(
                             R.id.txtIngredientQuantity
+                    );
+
+            btnEdit =
+                    itemView.findViewById(
+                            R.id.btnEdit
                     );
 
             btnDelete =
