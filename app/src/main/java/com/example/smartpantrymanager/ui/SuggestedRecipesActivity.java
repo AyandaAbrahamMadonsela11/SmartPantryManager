@@ -1,5 +1,6 @@
 package com.example.smartpantrymanager.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartpantrymanager.R;
-import com.example.smartpantrymanager.ui.DatabaseHelper;
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ public class SuggestedRecipesActivity
     private DatabaseHelper databaseHelper;
 
     private LinearLayout recipeContainer;
+    private TextView tvRecipeMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,11 @@ public class SuggestedRecipesActivity
                         R.id.recipeContainer
                 );
 
+        tvRecipeMessage =
+                findViewById(
+                        R.id.tvRecipeMessage
+                );
+
         Button btnBack =
                 findViewById(R.id.btnBack);
 
@@ -46,6 +52,7 @@ public class SuggestedRecipesActivity
         displayRecipes();
     }
 
+    @SuppressLint("SetTextI18n")
     private void displayRecipes() {
 
         recipeContainer.removeAllViews();
@@ -57,19 +64,38 @@ public class SuggestedRecipesActivity
 
         if (matchingRecipes.isEmpty()) {
 
+            tvRecipeMessage.setText(
+                    "No matching recipes are available with your current pantry ingredients."
+            );
+
             TextView message =
                     new TextView(this);
 
             message.setText(
-                    "No recipes available with your current pantry ingredients."
+                    "Add more ingredients or increase their quantities to see recipe suggestions."
             );
 
-            message.setTextSize(18);
+            message.setTextSize(16);
+
+            message.setGravity(
+                    android.view.Gravity.CENTER
+            );
+
+            message.setPadding(
+                    16,
+                    30,
+                    16,
+                    30
+            );
 
             recipeContainer.addView(message);
 
             return;
         }
+
+        tvRecipeMessage.setText(
+                "Recipes using your pantry ingredients:"
+        );
 
         for (Recipe recipe :
                 matchingRecipes) {
