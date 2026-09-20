@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private IngredientAdapter adapter;
     private DatabaseHelper databaseHelper;
+    private TextView txtEmptyPantry;
 
     private List<Ingredient> ingredientList;
 
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = findViewById(
                 R.id.recyclerViewIngredients
+        );
+
+        txtEmptyPantry = findViewById(
+                R.id.txtEmptyPantry
         );
 
         Button btnAddIngredient =
@@ -134,6 +141,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         adapter.updateList(ingredientList);
+
+        if (ingredientList.isEmpty()) {
+            txtEmptyPantry.setVisibility(View.VISIBLE);
+        } else {
+            txtEmptyPantry.setVisibility(View.GONE);
+        }
     }
 
     @Override
