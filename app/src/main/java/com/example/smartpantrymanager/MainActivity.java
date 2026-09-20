@@ -27,7 +27,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements IngredientAdapter.OnIngredientActionListener {
 
-    private RecyclerView recyclerView;
     private IngredientAdapter adapter;
     private DatabaseHelper databaseHelper;
     private TextView txtEmptyPantry;
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity
 
         databaseHelper = new DatabaseHelper(this);
 
-        recyclerView = findViewById(
+        RecyclerView recyclerView = findViewById(
                 R.id.recyclerViewIngredients
         );
 

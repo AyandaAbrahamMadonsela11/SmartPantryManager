@@ -18,7 +18,8 @@
         android:textStyle="bold"
         android:textColor="#006699"
         android:gravity="center"
-        android:layout_marginBottom="6dp" />
+        android:layout_marginBottom="6dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvSubtitle"
@@ -28,7 +29,8 @@
         android:textSize="15sp"
         android:textColor="#666666"
         android:gravity="center"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvPantryHeading"
@@ -38,7 +40,8 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#282828"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewIngredients"
@@ -56,7 +59,8 @@
         android:text="Your pantry is empty"
         android:textSize="16sp"
         android:visibility="gone"
-        android:padding="16dp" />
+        android:padding="16dp"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btnAddIngredient"
@@ -64,7 +68,8 @@
         android:layout_height="wrap_content"
         android:text="Add Ingredient"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btnRecipes"
@@ -72,13 +77,15 @@
         android:layout_height="wrap_content"
         android:text="Recipe Suggestions"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/btnSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Settings"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
