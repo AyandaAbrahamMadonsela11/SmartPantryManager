@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,7 +15,8 @@
         android:textSize="26sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="25dp" />
+        android:layout_marginBottom="20dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvInstructionsTitle"
@@ -23,12 +25,14 @@
         android:text="Instructions"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        tools:ignore="HardcodedText" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <TextView
             android:id="@+id/tvRecipeInstructions"
@@ -36,7 +40,10 @@
             android:layout_height="wrap_content"
             android:text="Recipe instructions"
             android:textSize="17sp"
-            android:padding="10dp" />
+            android:lineSpacingExtra="6dp"
+            android:padding="16dp"
+            android:background="@drawable/item_background"
+            tools:ignore="HardcodedText" />
 
     </ScrollView>
 
@@ -45,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Back"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
-

@@ -10,20 +10,17 @@ import com.example.smartpantrymanager.R;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
-    private TextView tvRecipeName;
-    private TextView tvRecipeInstructions;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_recipe_detail);
 
-        tvRecipeName = findViewById(
+        TextView tvRecipeName = findViewById(
                 R.id.tvRecipeName
         );
 
-        tvRecipeInstructions = findViewById(
+        TextView tvRecipeInstructions = findViewById(
                 R.id.tvRecipeInstructions
         );
 

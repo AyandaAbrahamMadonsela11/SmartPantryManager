@@ -112,10 +112,10 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
-        if (name.length() > 50) {
+        if (name.length() >= 15) {
 
             etIngredientName.setError(
-                    "Ingredient name must be 50 characters or less"
+                    "Ingredient name must be less than 15 characters"
             );
 
             etIngredientName.requestFocus();
@@ -134,6 +134,17 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        if (!quantityText.matches("[0-9]+")) {
+
+            etQuantity.setError(
+                    "Not allowed"
+            );
+
+            etQuantity.requestFocus();
+
+            return;
+        }
+
         int quantity;
 
         try {
@@ -144,7 +155,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
 
             etQuantity.setError(
-                    "Enter a valid number"
+                    "Not allowed"
             );
 
             etQuantity.requestFocus();

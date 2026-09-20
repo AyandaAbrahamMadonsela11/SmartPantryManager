@@ -115,17 +115,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    // Ingredient model
-    public static class Ingredient {
-
-        public int id;
-        public String name;
-        public int quantity;
-
-        public Ingredient(int id, String name, int quantity) {
-            this.id = id;
-            this.name = name;
-            this.quantity = quantity;
-        }
-    }
 }

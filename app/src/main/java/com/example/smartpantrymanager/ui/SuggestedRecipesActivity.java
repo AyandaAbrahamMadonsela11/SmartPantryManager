@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartpantrymanager.R;
@@ -100,40 +101,46 @@ public class SuggestedRecipesActivity
         for (Recipe recipe :
                 matchingRecipes) {
 
-            Button recipeButton =
-                    new Button(this);
-
-            recipeButton.setText(
-                    recipe.getName()
-            );
-
-            recipeButton.setTextSize(18);
-
-            recipeButton.setOnClickListener(v -> {
-
-                Intent intent =
-                        new Intent(
-                                SuggestedRecipesActivity.this,
-                                RecipeDetailActivity.class
-                        );
-
-                intent.putExtra(
-                        "recipe_name",
-                        recipe.getName()
-                );
-
-                intent.putExtra(
-                        "recipe_instructions",
-                        recipe.getInstructions()
-                );
-
-                startActivity(intent);
-            });
+            Button recipeButton = getButton(recipe);
 
             recipeContainer.addView(
                     recipeButton
             );
         }
+    }
+
+    @NonNull
+    private Button getButton(Recipe recipe) {
+        Button recipeButton =
+                new Button(this);
+
+        recipeButton.setText(
+                recipe.getName()
+        );
+
+        recipeButton.setTextSize(18);
+
+        recipeButton.setOnClickListener(v -> {
+
+            Intent intent =
+                    new Intent(
+                            SuggestedRecipesActivity.this,
+                            RecipeDetailActivity.class
+                    );
+
+            intent.putExtra(
+                    "recipe_name",
+                    recipe.getName()
+            );
+
+            intent.putExtra(
+                    "recipe_instructions",
+                    recipe.getInstructions()
+            );
+
+            startActivity(intent);
+        });
+        return recipeButton;
     }
 
     @Override

@@ -4,11 +4,11 @@ import java.util.Map;
 
 public class Recipe {
 
-    private String name;
+    private final String name;
 
-    private Map<String, Integer> ingredients;
+    private final Map<String, Integer> ingredients;
 
-    private String instructions;
+    private final String instructions;
 
     public Recipe(
             String name,

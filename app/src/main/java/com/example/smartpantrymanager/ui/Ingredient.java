@@ -2,9 +2,9 @@ package com.example.smartpantrymanager.ui;
 
 public class Ingredient {
 
-    private int id;
-    private String name;
-    private int quantity;
+    private final int id;
+    private final String name;
+    private final int quantity;
 
     public Ingredient(int id, String name, int quantity) {
         this.id = id;

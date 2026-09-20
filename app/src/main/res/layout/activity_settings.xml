@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,7 +15,8 @@
         android:textSize="26sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="30dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvAppName"
@@ -23,7 +25,8 @@
         android:text="Smart Pantry Manager"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvVersion"
@@ -31,7 +34,8 @@
         android:layout_height="wrap_content"
         android:text="Version 1.0"
         android:textSize="16sp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvMatchingInfo"
@@ -40,7 +44,8 @@
         android:text="Recipe matching: Strict matching is enabled. A recipe is suggested only when all required ingredients are available in the required quantities."
         android:textSize="16sp"
         android:padding="12dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        tools:ignore="HardcodedText" />
 
     <View
         android:layout_width="match_parent"
@@ -51,7 +56,8 @@
         android:id="@+id/btnBack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back" />
+        android:text="Back"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
 
