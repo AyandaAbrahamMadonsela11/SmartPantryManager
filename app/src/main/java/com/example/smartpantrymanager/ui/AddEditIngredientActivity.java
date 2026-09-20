@@ -112,6 +112,17 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        if (name.length() > 50) {
+
+            etIngredientName.setError(
+                    "Ingredient name must be 50 characters or less"
+            );
+
+            etIngredientName.requestFocus();
+
+            return;
+        }
+
         if (quantityText.isEmpty()) {
 
             etQuantity.setError(
