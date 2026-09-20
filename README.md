@@ -19,7 +19,7 @@ The application uses strict recipe matching. A recipe is suggested only when all
 * Toolbar navigation menu
 * Simple mobile-friendly interface
 
-## Database
+## Database 
 
 The application uses **SQLite** with `SQLiteOpenHelper` for local on-device data persistence.
 
