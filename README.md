@@ -43,7 +43,7 @@ The application implements full CRUD functionality:
 
 1. Clone or download the Smart Pantry Manager repository.
 2. Open the project in Android Studio.
-3. Allow Android Studio to synchronise the Gradle files.
+3. Allow Android Studio to synchronize the Gradle files.
 4. Create or select an Android emulator, or connect an Android device with USB debugging enabled.
 5. Build the project using Android Studio.
 6. Run the application.
@@ -70,3 +70,4 @@ Name: Ayanda Abraham Madonsela
 Student Number: 402310343
 Module: Mobile App Development 700
 Project: Smart Pantry Manager
+GitHub Link: https://github.com/AyandaAbrahamMadonsela11/SmartPantryManager
