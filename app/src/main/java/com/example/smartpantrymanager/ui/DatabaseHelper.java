@@ -8,11 +8,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "pantry.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME =
+            "pantry.db";
+
+    private static final int DATABASE_VERSION = 2;
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        super(
+                context,
+                DATABASE_NAME,
+                null,
+                DATABASE_VERSION
+        );
     }
 
     @Override
@@ -22,7 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "CREATE TABLE pantry (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "name TEXT NOT NULL, " +
-                        "quantity INTEGER NOT NULL)"
+                        "quantity INTEGER NOT NULL, " +
+                        "expiry_date TEXT NOT NULL)"
         );
     }
 
@@ -32,87 +41,126 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int oldVersion,
             int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS pantry");
+        if (oldVersion < 2) {
 
-        onCreate(db);
+            db.execSQL(
+                    "ALTER TABLE pantry " +
+                            "ADD COLUMN expiry_date " +
+                            "TEXT NOT NULL " +
+                            "DEFAULT '2099-12-31'"
+            );
+        }
     }
 
-    // Adding ingredient
-    public long addIngredient(String name, int quantity) {
+    public long addIngredient(
+            String name,
+            int quantity,
+            String expiryDate) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db =
+                getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("quantity", quantity);
+        ContentValues values =
+                new ContentValues();
 
-        long result = db.insert("pantry", null, values);
+        values.put(
+                "name",
+                name
+        );
 
-        db.close();
+        values.put(
+                "quantity",
+                quantity
+        );
 
-        return result;
+        values.put(
+                "expiry_date",
+                expiryDate
+        );
+
+        return db.insert(
+                "pantry",
+                null,
+                values
+        );
     }
 
-    // Getting all ingredients
     public Cursor getAllIngredients() {
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db =
+                getReadableDatabase();
 
         return db.rawQuery(
-                "SELECT id, name, quantity FROM pantry ORDER BY name",
+                "SELECT id, name, quantity, expiry_date " +
+                        "FROM pantry " +
+                        "ORDER BY name",
                 null
         );
     }
 
-    // Getting one ingredient
     public Cursor getIngredient(int id) {
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db =
+                getReadableDatabase();
 
         return db.rawQuery(
-                "SELECT id, name, quantity FROM pantry WHERE id = ?",
-                new String[]{String.valueOf(id)}
+                "SELECT id, name, quantity, expiry_date " +
+                        "FROM pantry " +
+                        "WHERE id = ?",
+                new String[]{
+                        String.valueOf(id)
+                }
         );
     }
 
-    // Updating ingredient
     public int updateIngredient(
             int id,
             String name,
-            int quantity) {
+            int quantity,
+            String expiryDate) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db =
+                getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("quantity", quantity);
+        ContentValues values =
+                new ContentValues();
 
-        int result = db.update(
+        values.put(
+                "name",
+                name
+        );
+
+        values.put(
+                "quantity",
+                quantity
+        );
+
+        values.put(
+                "expiry_date",
+                expiryDate
+        );
+
+        return db.update(
                 "pantry",
                 values,
                 "id = ?",
-                new String[]{String.valueOf(id)}
+                new String[]{
+                        String.valueOf(id)
+                }
         );
-
-        db.close();
-
-        return result;
     }
 
-    // Deleting ingredient
     public int deleteIngredient(int id) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db =
+                getWritableDatabase();
 
-        int result = db.delete(
+        return db.delete(
                 "pantry",
                 "id = ?",
-                new String[]{String.valueOf(id)}
+                new String[]{
+                        String.valueOf(id)
+                }
         );
-
-        db.close();
-
-        return result;
     }
-
 }

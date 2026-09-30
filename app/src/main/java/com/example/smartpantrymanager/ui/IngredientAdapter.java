@@ -33,6 +33,7 @@ public class IngredientAdapter
             OnIngredientActionListener listener) {
 
         this.ingredientList = ingredientList;
+
         this.listener = listener;
     }
 
@@ -67,12 +68,19 @@ public class IngredientAdapter
         );
 
         holder.txtIngredientQuantity.setText(
-                "Quantity: " + ingredient.getQuantity()
+                "Quantity: " +
+                        ingredient.getQuantity()
+        );
+
+        holder.txtIngredientExpiry.setText(
+                "Expiry Date: " +
+                        ingredient.getExpiryDate()
         );
 
         holder.btnEdit.setOnClickListener(v -> {
 
             if (listener != null) {
+
                 listener.onEdit(ingredient);
             }
         });
@@ -80,6 +88,7 @@ public class IngredientAdapter
         holder.btnDelete.setOnClickListener(v -> {
 
             if (listener != null) {
+
                 listener.onDelete(ingredient);
             }
         });
@@ -87,6 +96,7 @@ public class IngredientAdapter
         holder.itemView.setOnClickListener(v -> {
 
             if (listener != null) {
+
                 listener.onEdit(ingredient);
             }
         });
@@ -94,6 +104,7 @@ public class IngredientAdapter
 
     @Override
     public int getItemCount() {
+
         return ingredientList.size();
     }
 
@@ -110,8 +121,13 @@ public class IngredientAdapter
             extends RecyclerView.ViewHolder {
 
         TextView txtIngredientName;
+
         TextView txtIngredientQuantity;
+
+        TextView txtIngredientExpiry;
+
         Button btnEdit;
+
         Button btnDelete;
 
         public IngredientViewHolder(
@@ -127,6 +143,11 @@ public class IngredientAdapter
             txtIngredientQuantity =
                     itemView.findViewById(
                             R.id.txtIngredientQuantity
+                    );
+
+            txtIngredientExpiry =
+                    itemView.findViewById(
+                            R.id.txtIngredientExpiry
                     );
 
             btnEdit =

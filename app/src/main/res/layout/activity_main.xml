@@ -43,6 +43,20 @@
         android:layout_marginBottom="10dp"
         tools:ignore="HardcodedText" />
 
+    <!-- Search ingredients -->
+    <EditText
+        android:id="@+id/etSearchIngredient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@android:drawable/editbox_background"
+        android:hint="Search ingredients..."
+        android:inputType="text"
+        android:padding="12dp"
+        android:singleLine="true"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewIngredients"
         android:layout_width="match_parent"
@@ -85,6 +99,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Settings"
+        android:layout_marginBottom="8dp"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btnCloseApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Close App"
         android:textSize="16sp"
         tools:ignore="HardcodedText" />
 

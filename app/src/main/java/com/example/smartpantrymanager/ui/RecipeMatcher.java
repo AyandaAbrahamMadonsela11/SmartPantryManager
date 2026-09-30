@@ -1,45 +1,62 @@
 package com.example.smartpantrymanager.ui;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class RecipeMatcher {
 
-    // Checks if all recipe ingredients are available
+    // Checking if all recipe ingredients are available
     public static boolean matches(
             Recipe recipe,
             Map<String, Integer> pantry) {
 
+        // Creating a quick pantry lookup
+        Map<String, Integer> normalisedPantry =
+                new HashMap<>();
+
+        for (Map.Entry<String, Integer> available :
+                pantry.entrySet()) {
+
+            String name =
+                    normalise(
+                            available.getKey()
+                    );
+
+            int quantity =
+                    available.getValue();
+
+            normalisedPantry.put(
+                    name,
+                    quantity
+            );
+        }
+
+        // Checking every recipe ingredient
         for (Map.Entry<String, Integer> required :
                 recipe.getIngredients().entrySet()) {
 
             String requiredName =
-                    normalise(required.getKey());
+                    normalise(
+                            required.getKey()
+                    );
 
             int requiredQuantity =
                     required.getValue();
 
-            boolean found = false;
+            Integer availableQuantity =
+                    normalisedPantry.get(
+                            requiredName
+                    );
 
-            for (Map.Entry<String, Integer> available :
-                    pantry.entrySet()) {
-
-                String pantryName =
-                        normalise(available.getKey());
-
-                if (pantryName.equals(requiredName)) {
-
-                    int pantryQuantity =
-                            available.getValue();
-
-                    if (pantryQuantity >= requiredQuantity) {
-                        found = true;
-                    }
-
-                    break;
-                }
+            // Ingredient is missing
+            if (availableQuantity == null) {
+                return false;
             }
 
-            if (!found) {
+            // Not enough quantity
+            if (availableQuantity <
+                    requiredQuantity) {
+
                 return false;
             }
         }
@@ -48,32 +65,37 @@ public class RecipeMatcher {
     }
 
     // Handles simple singular and plural names
-    private static String normalise(String name) {
+    private static String normalise(
+            String name) {
 
-        String value = name
-                .trim()
-                .toLowerCase();
+        String value =
+                name
+                        .trim()
+                        .toLowerCase();
 
         if (value.endsWith("ies")) {
 
-            value = value.substring(
-                    0,
-                    value.length() - 3
-            ) + "y";
+            value =
+                    value.substring(
+                            0,
+                            value.length() - 3
+                    ) + "y";
 
         } else if (value.endsWith("es")) {
 
-            value = value.substring(
-                    0,
-                    value.length() - 2
-            );
+            value =
+                    value.substring(
+                            0,
+                            value.length() - 2
+                    );
 
         } else if (value.endsWith("s")) {
 
-            value = value.substring(
-                    0,
-                    value.length() - 1
-            );
+            value =
+                    value.substring(
+                            0,
+                            value.length() - 1
+                    );
         }
 
         return value;

@@ -1,5 +1,6 @@
 package com.example.smartpantrymanager.ui;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,14 +12,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartpantrymanager.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class AddEditIngredientActivity extends AppCompatActivity {
 
     private EditText etIngredientName;
     private EditText etQuantity;
-
-    private com.example.smartpantrymanager.ui.DatabaseHelper databaseHelper;
+    private final Calendar selectedDate = Calendar.getInstance();
+    private final SimpleDateFormat dateFormat =
+            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     private int ingredientId = -1;
+    private EditText etExpiryDate;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +34,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_add_edit_ingredient);
 
-        databaseHelper =
-                new com.example.smartpantrymanager.ui.DatabaseHelper(this);
+        databaseHelper = new DatabaseHelper(this);
 
         etIngredientName =
                 findViewById(R.id.etIngredientName);
@@ -35,11 +42,18 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         etQuantity =
                 findViewById(R.id.etQuantity);
 
+        etExpiryDate =
+                findViewById(R.id.etExpiryDate);
+
         Button btnSave =
                 findViewById(R.id.btnSaveIngredient);
 
         Button btnCancel =
                 findViewById(R.id.btnCancel);
+
+        etExpiryDate.setOnClickListener(
+                v -> showDatePicker()
+        );
 
         Intent intent = getIntent();
 
@@ -51,6 +65,13 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             );
 
             loadIngredient();
+
+        } else {
+
+            // Default expiry date is today
+            etExpiryDate.setText(
+                    dateFormat.format(selectedDate.getTime())
+            );
         }
 
         btnSave.setOnClickListener(
@@ -62,6 +83,39 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         );
     }
 
+    private void showDatePicker() {
+
+        DatePickerDialog datePickerDialog =
+                new DatePickerDialog(
+                        this,
+                        (view, year, month, dayOfMonth) -> {
+
+                            selectedDate.set(
+                                    year,
+                                    month,
+                                    dayOfMonth
+                            );
+
+                            etExpiryDate.setText(
+                                    dateFormat.format(
+                                            selectedDate.getTime()
+                                    )
+                            );
+                        },
+                        selectedDate.get(
+                                Calendar.YEAR
+                        ),
+                        selectedDate.get(
+                                Calendar.MONTH
+                        ),
+                        selectedDate.get(
+                                Calendar.DAY_OF_MONTH
+                        )
+                );
+
+        datePickerDialog.show();
+    }
+
     private void loadIngredient() {
 
         Cursor cursor =
@@ -71,12 +125,23 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
             String name =
                     cursor.getString(
-                            cursor.getColumnIndexOrThrow("name")
+                            cursor.getColumnIndexOrThrow(
+                                    "name"
+                            )
                     );
 
             int quantity =
                     cursor.getInt(
-                            cursor.getColumnIndexOrThrow("quantity")
+                            cursor.getColumnIndexOrThrow(
+                                    "quantity"
+                            )
+                    );
+
+            String expiryDate =
+                    cursor.getString(
+                            cursor.getColumnIndexOrThrow(
+                                    "expiry_date"
+                            )
                     );
 
             etIngredientName.setText(name);
@@ -84,6 +149,8 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             etQuantity.setText(
                     String.valueOf(quantity)
             );
+
+            etExpiryDate.setText(expiryDate);
 
             cursor.close();
         }
@@ -98,6 +165,11 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         String quantityText =
                 etQuantity.getText()
+                        .toString()
+                        .trim();
+
+        String expiryDate =
+                etExpiryDate.getText()
                         .toString()
                         .trim();
 
@@ -174,12 +246,24 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        if (expiryDate.isEmpty()) {
+
+            etExpiryDate.setError(
+                    "Select an expiry date"
+            );
+
+            etExpiryDate.requestFocus();
+
+            return;
+        }
+
         if (ingredientId == -1) {
 
             long result =
                     databaseHelper.addIngredient(
                             name,
-                            quantity
+                            quantity,
+                            expiryDate
                     );
 
             if (result != -1) {
@@ -207,7 +291,8 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                     databaseHelper.updateIngredient(
                             ingredientId,
                             name,
-                            quantity
+                            quantity,
+                            expiryDate
                     );
 
             if (result > 0) {

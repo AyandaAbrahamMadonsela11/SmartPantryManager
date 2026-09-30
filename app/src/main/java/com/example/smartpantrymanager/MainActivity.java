@@ -3,10 +3,13 @@ package com.example.smartpantrymanager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,11 +21,13 @@ import com.example.smartpantrymanager.ui.AddEditIngredientActivity;
 import com.example.smartpantrymanager.ui.DatabaseHelper;
 import com.example.smartpantrymanager.ui.Ingredient;
 import com.example.smartpantrymanager.ui.IngredientAdapter;
-import com.example.smartpantrymanager.ui.SuggestedRecipesActivity;
 import com.example.smartpantrymanager.ui.SettingsActivity;
+import com.example.smartpantrymanager.ui.SuggestedRecipesActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity
         implements IngredientAdapter.OnIngredientActionListener {
@@ -30,8 +35,12 @@ public class MainActivity extends AppCompatActivity
     private IngredientAdapter adapter;
     private DatabaseHelper databaseHelper;
     private TextView txtEmptyPantry;
+    // Saving time for crashing, Runs database work away from the UI thread
+    private final ExecutorService databaseExecutor =
+            Executors.newSingleThreadExecutor();
 
     private List<Ingredient> ingredientList;
+    private EditText etSearchIngredient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +48,17 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        databaseHelper = new DatabaseHelper(this);
+        databaseHelper =
+                new DatabaseHelper(this);
 
-        RecyclerView recyclerView = findViewById(
-                R.id.recyclerViewIngredients
-        );
+        RecyclerView recyclerView =
+                findViewById(R.id.recyclerViewIngredients);
 
-        txtEmptyPantry = findViewById(
-                R.id.txtEmptyPantry
-        );
+        txtEmptyPantry =
+                findViewById(R.id.txtEmptyPantry);
+
+        etSearchIngredient =
+                findViewById(R.id.etSearchIngredient);
 
         Button btnAddIngredient =
                 findViewById(R.id.btnAddIngredient);
@@ -58,12 +69,17 @@ public class MainActivity extends AppCompatActivity
         Button btnSettings =
                 findViewById(R.id.btnSettings);
 
-        ingredientList = new ArrayList<>();
+        Button btnCloseApp =
+                findViewById(R.id.btnCloseApp);
 
-        adapter = new IngredientAdapter(
-                ingredientList,
-                this
-        );
+        ingredientList =
+                new ArrayList<>();
+
+        adapter =
+                new IngredientAdapter(
+                        ingredientList,
+                        this
+                );
 
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this)
@@ -71,80 +87,240 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView.setAdapter(adapter);
 
+        // Open Add Ingredient screen
         btnAddIngredient.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    AddEditIngredientActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            MainActivity.this,
+                            AddEditIngredientActivity.class
+                    );
 
             startActivity(intent);
         });
 
+        // Open Recipe Suggestions screen
         btnRecipes.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    SuggestedRecipesActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            MainActivity.this,
+                            SuggestedRecipesActivity.class
+                    );
 
             startActivity(intent);
         });
 
+        // Open Settings screen
         btnSettings.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    SettingsActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            MainActivity.this,
+                            SettingsActivity.class
+                    );
 
             startActivity(intent);
         });
+
+        // Close application
+        btnCloseApp.setOnClickListener(v -> {
+            finishAffinity();
+        });
+
+        // Search ingredients
+        etSearchIngredient.addTextChangedListener(
+                new TextWatcher() {
+
+                    @Override
+                    public void beforeTextChanged(
+                            CharSequence s,
+                            int start,
+                            int count,
+                            int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(
+                            CharSequence s,
+                            int start,
+                            int before,
+                            int count) {
+
+                        filterIngredients(
+                                s.toString()
+                        );
+                    }
+
+                    @Override
+                    public void afterTextChanged(
+                            Editable s) {
+                    }
+                }
+        );
 
         loadIngredients();
     }
 
     private void loadIngredients() {
 
-        ingredientList.clear();
+        databaseExecutor.execute(() -> {
 
-        Cursor cursor =
-                databaseHelper.getAllIngredients();
+            List<Ingredient> loadedList =
+                    new ArrayList<>();
 
-        if (cursor != null) {
+            Cursor cursor =
+                    databaseHelper.getAllIngredients();
 
-            while (cursor.moveToNext()) {
+            if (cursor != null) {
 
-                int id = cursor.getInt(
-                        cursor.getColumnIndexOrThrow("id")
+                try {
+
+                    while (cursor.moveToNext()) {
+
+                        int id =
+                                cursor.getInt(
+                                        cursor.getColumnIndexOrThrow(
+                                                "id"
+                                        )
+                                );
+
+                        String name =
+                                cursor.getString(
+                                        cursor.getColumnIndexOrThrow(
+                                                "name"
+                                        )
+                                );
+
+                        int quantity =
+                                cursor.getInt(
+                                        cursor.getColumnIndexOrThrow(
+                                                "quantity"
+                                        )
+                                );
+
+                        String expiryDate =
+                                cursor.getString(
+                                        cursor.getColumnIndexOrThrow(
+                                                "expiry_date"
+                                        )
+                                );
+
+                        loadedList.add(
+                                new Ingredient(
+                                        id,
+                                        name,
+                                        quantity,
+                                        expiryDate
+                                )
+                        );
+                    }
+
+                } finally {
+                    cursor.close();
+                }
+            }
+
+            runOnUiThread(() -> {
+
+                ingredientList.clear();
+
+                ingredientList.addAll(
+                        loadedList
                 );
 
-                String name = cursor.getString(
-                        cursor.getColumnIndexOrThrow("name")
+                String searchText =
+                        etSearchIngredient
+                                .getText()
+                                .toString()
+                                .trim();
+
+                if (ingredientList.isEmpty()) {
+
+                    adapter.updateList(
+                            new ArrayList<>()
+                    );
+
+                    txtEmptyPantry.setText(
+                            "Your pantry is empty"
+                    );
+
+                    txtEmptyPantry.setVisibility(
+                            View.VISIBLE
+                    );
+
+                } else if (searchText.isEmpty()) {
+
+                    adapter.updateList(
+                            ingredientList
+                    );
+
+                    txtEmptyPantry.setVisibility(
+                            View.GONE
+                    );
+
+                } else {
+
+                    filterIngredients(
+                            searchText
+                    );
+                }
+            });
+        });
+    }
+
+    private void filterIngredients(
+            String searchText) {
+
+        List<Ingredient> filteredList =
+                new ArrayList<>();
+
+        String search =
+                searchText
+                        .trim()
+                        .toLowerCase();
+
+        for (Ingredient ingredient :
+                ingredientList) {
+
+            if (ingredient.getName()
+                    .toLowerCase()
+                    .contains(search)) {
+
+                filteredList.add(
+                        ingredient
+                );
+            }
+        }
+
+        adapter.updateList(
+                filteredList
+        );
+
+        if (filteredList.isEmpty()) {
+
+            if (ingredientList.isEmpty()) {
+
+                txtEmptyPantry.setText(
+                        "Your pantry is empty"
                 );
 
-                int quantity = cursor.getInt(
-                        cursor.getColumnIndexOrThrow("quantity")
-                );
+            } else {
 
-                ingredientList.add(
-                        new Ingredient(
-                                id,
-                                name,
-                                quantity
-                        )
+                txtEmptyPantry.setText(
+                        "No ingredients found"
                 );
             }
 
-            cursor.close();
-        }
+            txtEmptyPantry.setVisibility(
+                    View.VISIBLE
+            );
 
-        adapter.updateList(ingredientList);
-
-        if (ingredientList.isEmpty()) {
-            txtEmptyPantry.setVisibility(View.VISIBLE);
         } else {
-            txtEmptyPantry.setVisibility(View.GONE);
+
+            txtEmptyPantry.setVisibility(
+                    View.GONE
+            );
         }
     }
 
@@ -161,12 +337,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onEdit(Ingredient ingredient) {
+    public void onEdit(
+            Ingredient ingredient) {
 
-        Intent intent = new Intent(
-                MainActivity.this,
-                AddEditIngredientActivity.class
-        );
+        Intent intent =
+                new Intent(
+                        MainActivity.this,
+                        AddEditIngredientActivity.class
+                );
 
         intent.putExtra(
                 "ingredient_id",
@@ -177,35 +355,43 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDelete(Ingredient ingredient) {
+    public void onDelete(
+            Ingredient ingredient) {
 
-        int result =
-                databaseHelper.deleteIngredient(
-                        ingredient.getId()
-                );
+        databaseExecutor.execute(() -> {
 
-        if (result > 0) {
+            int result =
+                    databaseHelper.deleteIngredient(
+                            ingredient.getId()
+                    );
 
-            Toast.makeText(
-                    this,
-                    "Ingredient deleted",
-                    Toast.LENGTH_SHORT
-            ).show();
+            runOnUiThread(() -> {
 
-            loadIngredients();
+                if (result > 0) {
 
-        } else {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Ingredient deleted",
+                            Toast.LENGTH_SHORT
+                    ).show();
 
-            Toast.makeText(
-                    this,
-                    "Could not delete ingredient",
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
+                    loadIngredients();
+
+                } else {
+
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Could not delete ingredient",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            });
+        });
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(
+            Menu menu) {
 
         getMenuInflater().inflate(
                 R.menu.main_menu,
@@ -219,7 +405,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(
             MenuItem item) {
 
-        int itemId = item.getItemId();
+        int itemId =
+                item.getItemId();
 
         if (itemId == R.id.menu_pantry) {
 
@@ -227,10 +414,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (itemId == R.id.menu_recipes) {
 
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    SuggestedRecipesActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            MainActivity.this,
+                            SuggestedRecipesActivity.class
+                    );
 
             startActivity(intent);
 
@@ -238,10 +426,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (itemId == R.id.menu_settings) {
 
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    SettingsActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            MainActivity.this,
+                            SettingsActivity.class
+                    );
 
             startActivity(intent);
 
@@ -249,5 +438,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        databaseExecutor.shutdown();
+
+        super.onDestroy();
     }
 }

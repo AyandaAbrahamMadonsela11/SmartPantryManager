@@ -2,9 +2,13 @@ package com.example.smartpantrymanager.ui;
 
 import android.database.Cursor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class RecipeRepository {
@@ -203,25 +207,46 @@ public class RecipeRepository {
     }
 
     public static Map<String, Integer> getPantry(
-            com.example.smartpantrymanager.ui.DatabaseHelper databaseHelper) {
+            DatabaseHelper databaseHelper) {
 
         Map<String, Integer> pantry = new HashMap<>();
 
-        Cursor cursor = databaseHelper.getAllIngredients();
+        Cursor cursor =
+                databaseHelper.getAllIngredients();
 
         if (cursor != null) {
 
             while (cursor.moveToNext()) {
 
-                String name = cursor.getString(
-                        cursor.getColumnIndexOrThrow("name")
-                );
+                String name =
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow(
+                                        "name"
+                                )
+                        );
 
-                int quantity = cursor.getInt(
-                        cursor.getColumnIndexOrThrow("quantity")
-                );
+                int quantity =
+                        cursor.getInt(
+                                cursor.getColumnIndexOrThrow(
+                                        "quantity"
+                                )
+                        );
 
-                pantry.put(name, quantity);
+                String expiryDate =
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow(
+                                        "expiry_date"
+                                )
+                        );
+
+                // Only include ingredients that have not expired
+                if (isNotExpired(expiryDate)) {
+
+                    pantry.put(
+                            name,
+                            quantity
+                    );
+                }
             }
 
             cursor.close();
@@ -230,10 +255,50 @@ public class RecipeRepository {
         return pantry;
     }
 
-    public static List<Recipe> getMatchingRecipes(
-            com.example.smartpantrymanager.ui.DatabaseHelper databaseHelper) {
+    private static boolean isNotExpired(
+            String expiryDate) {
 
-        List<Recipe> matchingRecipes = new ArrayList<>();
+        if (expiryDate == null ||
+                expiryDate.trim().isEmpty()) {
+
+            return false;
+        }
+
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat(
+                        "dd/MM/yyyy",
+                        Locale.getDefault()
+                );
+
+        dateFormat.setLenient(false);
+
+        try {
+
+            Date expiry =
+                    dateFormat.parse(expiryDate);
+
+            Date today =
+                    dateFormat.parse(
+                            dateFormat.format(
+                                    new Date()
+                            )
+                    );
+
+            return expiry != null &&
+                    today != null &&
+                    !expiry.before(today);
+
+        } catch (ParseException e) {
+
+            return false;
+        }
+    }
+
+    public static List<Recipe> getMatchingRecipes(
+            DatabaseHelper databaseHelper) {
+
+        List<Recipe> matchingRecipes =
+                new ArrayList<>();
 
         Map<String, Integer> pantry =
                 getPantry(databaseHelper);
@@ -243,7 +308,10 @@ public class RecipeRepository {
 
         for (Recipe recipe : recipes) {
 
-            if (RecipeMatcher.matches(recipe, pantry)) {
+            if (RecipeMatcher.matches(
+                    recipe,
+                    pantry)) {
+
                 matchingRecipes.add(recipe);
             }
         }

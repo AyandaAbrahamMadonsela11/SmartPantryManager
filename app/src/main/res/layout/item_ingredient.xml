@@ -30,6 +30,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Quantity: 1"
+            android:layout_marginTop="4dp"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/txtIngredientExpiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Expiry Date: 29/09/2026"
             android:textSize="14sp"
             android:textColor="#666666"
             android:layout_marginTop="4dp"
