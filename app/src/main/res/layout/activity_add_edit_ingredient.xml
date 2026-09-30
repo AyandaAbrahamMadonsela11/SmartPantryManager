@@ -1,67 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#F5F8FA"
-    android:padding="24dp">
+    tools:context=".ui.AddEditIngredientActivity">
 
-    <TextView
-        android:id="@+id/tvFormTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Ingredient"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#006699"
-        android:gravity="center"
-        android:layout_marginBottom="30dp"
-        tools:ignore="HardcodedText" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <EditText
-        android:id="@+id/etIngredientName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ingredient name"
-        android:inputType="text"
-        android:layout_marginBottom="16dp"
-        tools:ignore="Autofill,HardcodedText" />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:gravity="center"
+            android:text="Add Ingredient"
+            android:textColor="#006699"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
-    <EditText
-        android:id="@+id/etQuantity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Quantity"
-        android:inputType="number"
-        android:layout_marginBottom="16dp"
-        tools:ignore="Autofill,HardcodedText" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Ingredient Name"
+            android:textColor="#282828"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
-    <EditText
-        android:id="@+id/etExpiryDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="false"
-        android:hint="Expiry date"
-        android:inputType="none"
-        android:layout_marginBottom="24dp"
-        tools:ignore="Autofill,HardcodedText" />
+        <EditText
+            android:id="@+id/etIngredientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:autofillHints=""
+            android:hint="Enter ingredient name"
+            android:inputType="textCapSentences"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/btnSaveIngredient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Ingredient"
-        android:layout_marginBottom="12dp"
-        tools:ignore="HardcodedText" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Quantity"
+            android:textColor="#282828"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/etQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:autofillHints=""
+            android:hint="Enter quantity"
+            android:inputType="number"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Unit"
+            android:textColor="#282828"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <Spinner
+            android:id="@+id/spinnerUnit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Expiry Date"
+            android:textColor="#282828"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <EditText
+            android:id="@+id/etExpiryDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:autofillHints=""
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Select expiry date"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText,KeyboardInaccessibleWidget,TextFields" />
+
+        <Button
+            android:id="@+id/btnSaveIngredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="Save Ingredient"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</ScrollView>

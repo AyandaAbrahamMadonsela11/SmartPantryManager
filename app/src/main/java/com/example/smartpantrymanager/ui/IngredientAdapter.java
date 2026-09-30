@@ -15,26 +15,23 @@ import com.example.smartpantrymanager.R;
 import java.util.List;
 
 public class IngredientAdapter
-        extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
+        extends RecyclerView.Adapter<
+        IngredientAdapter.IngredientViewHolder> {
 
     private List<Ingredient> ingredientList;
 
     private final OnIngredientActionListener listener;
 
-    public interface OnIngredientActionListener {
-
-        void onEdit(Ingredient ingredient);
-
-        void onDelete(Ingredient ingredient);
-    }
-
+    // Creating the ingredient adapter
     public IngredientAdapter(
             List<Ingredient> ingredientList,
             OnIngredientActionListener listener) {
 
-        this.ingredientList = ingredientList;
+        this.ingredientList =
+                ingredientList;
 
-        this.listener = listener;
+        this.listener =
+                listener;
     }
 
     @NonNull
@@ -43,15 +40,19 @@ public class IngredientAdapter
             @NonNull ViewGroup parent,
             int viewType) {
 
-        View view = LayoutInflater.from(
-                parent.getContext()
-        ).inflate(
-                R.layout.item_ingredient,
-                parent,
-                false
-        );
+        // Creating the ingredient item
+        View view =
+                LayoutInflater.from(
+                        parent.getContext()
+                ).inflate(
+                        R.layout.item_ingredient,
+                        parent,
+                        false
+                );
 
-        return new IngredientViewHolder(view);
+        return new IngredientViewHolder(
+                view
+        );
     }
 
     @SuppressLint("SetTextI18n")
@@ -61,45 +62,77 @@ public class IngredientAdapter
             int position) {
 
         Ingredient ingredient =
-                ingredientList.get(position);
+                ingredientList.get(
+                        position
+                );
 
+        // Showing the ingredient name
         holder.txtIngredientName.setText(
                 ingredient.getName()
         );
 
+        // Showing the quantity and unit
         holder.txtIngredientQuantity.setText(
                 "Quantity: " +
-                        ingredient.getQuantity()
+                        ingredient.getQuantity() +
+                        " " +
+                        ingredient.getUnit()
         );
 
+        // Showing the expiry date
         holder.txtIngredientExpiry.setText(
                 "Expiry Date: " +
                         ingredient.getExpiryDate()
         );
 
-        holder.btnEdit.setOnClickListener(v -> {
+        // Editing the ingredient
+        holder.btnEdit.setOnClickListener(
+                v -> {
 
-            if (listener != null) {
+                    if (listener != null) {
 
-                listener.onEdit(ingredient);
-            }
-        });
+                        listener.onEdit(
+                                ingredient
+                        );
+                    }
+                }
+        );
 
-        holder.btnDelete.setOnClickListener(v -> {
+        // Deleting the ingredient
+        holder.btnDelete.setOnClickListener(
+                v -> {
 
-            if (listener != null) {
+                    if (listener != null) {
 
-                listener.onDelete(ingredient);
-            }
-        });
+                        listener.onDelete(
+                                ingredient
+                        );
+                    }
+                }
+        );
 
-        holder.itemView.setOnClickListener(v -> {
+        // Opening the edit screen
+        holder.itemView.setOnClickListener(
+                v -> {
 
-            if (listener != null) {
+                    if (listener != null) {
 
-                listener.onEdit(ingredient);
-            }
-        });
+                        listener.onEdit(
+                                ingredient
+                        );
+                    }
+                }
+        );
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateList(
+            List<Ingredient> newList) {
+
+        this.ingredientList =
+                newList;
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -108,26 +141,25 @@ public class IngredientAdapter
         return ingredientList.size();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void updateList(
-            List<Ingredient> newList) {
+    public interface OnIngredientActionListener {
 
-        this.ingredientList = newList;
+        void onEdit(
+                Ingredient ingredient
+        );
 
-        notifyDataSetChanged();
+        void onDelete(
+                Ingredient ingredient
+        );
     }
 
     public static class IngredientViewHolder
             extends RecyclerView.ViewHolder {
 
         TextView txtIngredientName;
-
         TextView txtIngredientQuantity;
-
         TextView txtIngredientExpiry;
 
         Button btnEdit;
-
         Button btnDelete;
 
         public IngredientViewHolder(

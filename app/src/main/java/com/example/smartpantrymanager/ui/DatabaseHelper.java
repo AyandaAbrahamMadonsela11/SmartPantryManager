@@ -11,10 +11,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME =
             "pantry.db";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public DatabaseHelper(Context context) {
-
         super(
                 context,
                 DATABASE_NAME,
@@ -23,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    // Creating the database table
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -31,16 +31,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "name TEXT NOT NULL, " +
                         "quantity INTEGER NOT NULL, " +
-                        "expiry_date TEXT NOT NULL)"
+                        "expiry_date TEXT NOT NULL, " +
+                        "unit TEXT NOT NULL DEFAULT 'unit')"
         );
     }
 
+    // Updating the database when the version changes
     @Override
     public void onUpgrade(
             SQLiteDatabase db,
             int oldVersion,
             int newVersion) {
 
+        // Adding the expiry date column
         if (oldVersion < 2) {
 
             db.execSQL(
@@ -50,12 +53,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             "DEFAULT '2099-12-31'"
             );
         }
+
+        // Adding the unit column
+        if (oldVersion < 3) {
+
+            db.execSQL(
+                    "ALTER TABLE pantry " +
+                            "ADD COLUMN unit " +
+                            "TEXT NOT NULL " +
+                            "DEFAULT 'unit'"
+            );
+        }
     }
 
+    // Adding an ingredient
     public long addIngredient(
             String name,
             int quantity,
-            String expiryDate) {
+            String expiryDate,
+            String unit) {
 
         SQLiteDatabase db =
                 getWritableDatabase();
@@ -76,6 +92,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(
                 "expiry_date",
                 expiryDate
+        );
+
+        values.put(
+                "unit",
+                unit
         );
 
         return db.insert(
@@ -85,26 +106,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    // Getting all ingredients
     public Cursor getAllIngredients() {
 
         SQLiteDatabase db =
                 getReadableDatabase();
 
         return db.rawQuery(
-                "SELECT id, name, quantity, expiry_date " +
+                "SELECT id, name, quantity, expiry_date, unit " +
                         "FROM pantry " +
                         "ORDER BY name",
                 null
         );
     }
 
+    // Getting one ingredient
     public Cursor getIngredient(int id) {
 
         SQLiteDatabase db =
                 getReadableDatabase();
 
         return db.rawQuery(
-                "SELECT id, name, quantity, expiry_date " +
+                "SELECT id, name, quantity, expiry_date, unit " +
                         "FROM pantry " +
                         "WHERE id = ?",
                 new String[]{
@@ -113,11 +136,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    // Updating an ingredient
     public int updateIngredient(
             int id,
             String name,
             int quantity,
-            String expiryDate) {
+            String expiryDate,
+            String unit) {
 
         SQLiteDatabase db =
                 getWritableDatabase();
@@ -138,6 +163,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(
                 "expiry_date",
                 expiryDate
+        );
+
+        values.put(
+                "unit",
+                unit
         );
 
         return db.update(
@@ -150,6 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    // Deleting an ingredient
     public int deleteIngredient(int id) {
 
         SQLiteDatabase db =

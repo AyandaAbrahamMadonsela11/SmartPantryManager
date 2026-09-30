@@ -1,5 +1,7 @@
 package com.example.smartpantrymanager;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,42 +38,63 @@ public class MainActivity extends AppCompatActivity
     private IngredientAdapter adapter;
     private DatabaseHelper databaseHelper;
     private TextView txtEmptyPantry;
-    // Saving time for crashing, Runs database work away from the UI thread
+    // Running database work away from the UI thread
     private final ExecutorService databaseExecutor =
             Executors.newSingleThreadExecutor();
-
-    private List<Ingredient> ingredientList;
     private EditText etSearchIngredient;
+    private Button btnHome;
+    private List<Ingredient> ingredientList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(
+                R.layout.activity_main
+        );
 
         databaseHelper =
                 new DatabaseHelper(this);
 
         RecyclerView recyclerView =
-                findViewById(R.id.recyclerViewIngredients);
+                findViewById(
+                        R.id.recyclerViewIngredients
+                );
 
         txtEmptyPantry =
-                findViewById(R.id.txtEmptyPantry);
+                findViewById(
+                        R.id.txtEmptyPantry
+                );
 
         etSearchIngredient =
-                findViewById(R.id.etSearchIngredient);
+                findViewById(
+                        R.id.etSearchIngredient
+                );
+
+        btnHome =
+                findViewById(
+                        R.id.btnHome
+                );
 
         Button btnAddIngredient =
-                findViewById(R.id.btnAddIngredient);
+                findViewById(
+                        R.id.btnAddIngredient
+                );
 
         Button btnRecipes =
-                findViewById(R.id.btnRecipes);
+                findViewById(
+                        R.id.btnRecipes
+                );
 
         Button btnSettings =
-                findViewById(R.id.btnSettings);
+                findViewById(
+                        R.id.btnSettings
+                );
 
         Button btnCloseApp =
-                findViewById(R.id.btnCloseApp);
+                findViewById(
+                        R.id.btnCloseApp
+                );
 
         ingredientList =
                 new ArrayList<>();
@@ -85,9 +109,56 @@ public class MainActivity extends AppCompatActivity
                 new LinearLayoutManager(this)
         );
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(
+                adapter
+        );
 
-        // Open Add Ingredient screen
+        // Closing the search
+        btnHome.setOnClickListener(v -> {
+
+            // Clearing the search text
+            etSearchIngredient.setText("");
+
+            // Removing focus from search
+            etSearchIngredient.clearFocus();
+
+            // Hiding the keyboard
+            InputMethodManager keyboard =
+                    (InputMethodManager)
+                            getSystemService(
+                                    Context.INPUT_METHOD_SERVICE
+                            );
+
+            if (keyboard != null) {
+
+                keyboard.hideSoftInputFromWindow(
+                        etSearchIngredient.getWindowToken(),
+                        0
+                );
+            }
+
+            // Hiding Home button
+            btnHome.setVisibility(
+                    View.GONE
+            );
+
+            // Showing all ingredients
+            adapter.updateList(
+                    ingredientList
+            );
+
+            // Hiding empty message
+            txtEmptyPantry.setVisibility(
+                    View.GONE
+            );
+
+            // Returning to the top of the pantry
+            recyclerView.scrollToPosition(
+                    0
+            );
+        });
+
+        // Opening Add Ingredient screen
         btnAddIngredient.setOnClickListener(v -> {
 
             Intent intent =
@@ -99,7 +170,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         });
 
-        // Open Recipe Suggestions screen
+        // Opening Recipe Suggestions screen
         btnRecipes.setOnClickListener(v -> {
 
             Intent intent =
@@ -111,7 +182,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         });
 
-        // Open Settings screen
+        // Opening Settings screen
         btnSettings.setOnClickListener(v -> {
 
             Intent intent =
@@ -123,12 +194,12 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         });
 
-        // Close application
+        // Closing the application
         btnCloseApp.setOnClickListener(v -> {
             finishAffinity();
         });
 
-        // Search ingredients
+        // Searching ingredients
         etSearchIngredient.addTextChangedListener(
                 new TextWatcher() {
 
@@ -140,6 +211,7 @@ public class MainActivity extends AppCompatActivity
                             int after) {
                     }
 
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onTextChanged(
                             CharSequence s,
@@ -147,9 +219,51 @@ public class MainActivity extends AppCompatActivity
                             int before,
                             int count) {
 
-                        filterIngredients(
+                        String searchText =
                                 s.toString()
-                        );
+                                        .trim();
+
+                        if (searchText.isEmpty()) {
+
+                            // Hiding Home button
+                            btnHome.setVisibility(
+                                    View.GONE
+                            );
+
+                            // Showing all ingredients
+                            adapter.updateList(
+                                    ingredientList
+                            );
+
+                            if (ingredientList.isEmpty()) {
+
+                                txtEmptyPantry.setText(
+                                        "Your pantry is empty"
+                                );
+
+                                txtEmptyPantry.setVisibility(
+                                        View.VISIBLE
+                                );
+
+                            } else {
+
+                                txtEmptyPantry.setVisibility(
+                                        View.GONE
+                                );
+                            }
+
+                        } else {
+
+                            // Showing Home button
+                            btnHome.setVisibility(
+                                    View.VISIBLE
+                            );
+
+                            // Filtering ingredients
+                            filterIngredients(
+                                    searchText
+                            );
+                        }
                     }
 
                     @Override
@@ -159,9 +273,12 @@ public class MainActivity extends AppCompatActivity
                 }
         );
 
+        // Loading ingredients
         loadIngredients();
     }
 
+    // Loading ingredients
+    @SuppressLint("SetTextI18n")
     private void loadIngredients() {
 
         databaseExecutor.execute(() -> {
@@ -206,17 +323,27 @@ public class MainActivity extends AppCompatActivity
                                         )
                                 );
 
+                        String unit =
+                                cursor.getString(
+                                        cursor.getColumnIndexOrThrow(
+                                                "unit"
+                                        )
+                                );
+
+                        // Creating the ingredient object
                         loadedList.add(
                                 new Ingredient(
                                         id,
                                         name,
                                         quantity,
-                                        expiryDate
+                                        expiryDate,
+                                        unit
                                 )
                         );
                     }
 
                 } finally {
+
                     cursor.close();
                 }
             }
@@ -261,6 +388,7 @@ public class MainActivity extends AppCompatActivity
 
                 } else {
 
+                    // Searching the loaded ingredients
                     filterIngredients(
                             searchText
                     );
@@ -269,6 +397,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    // Filtering ingredients
+    @SuppressLint("SetTextI18n")
     private void filterIngredients(
             String searchText) {
 
@@ -332,6 +462,7 @@ public class MainActivity extends AppCompatActivity
         if (databaseHelper != null &&
                 adapter != null) {
 
+            // Loading the latest ingredients
             loadIngredients();
         }
     }
@@ -340,6 +471,7 @@ public class MainActivity extends AppCompatActivity
     public void onEdit(
             Ingredient ingredient) {
 
+        // Opening the edit screen
         Intent intent =
                 new Intent(
                         MainActivity.this,
@@ -360,6 +492,7 @@ public class MainActivity extends AppCompatActivity
 
         databaseExecutor.execute(() -> {
 
+            // Deleting the ingredient
             int result =
                     databaseHelper.deleteIngredient(
                             ingredient.getId()
@@ -375,6 +508,7 @@ public class MainActivity extends AppCompatActivity
                             Toast.LENGTH_SHORT
                     ).show();
 
+                    // Loading the updated pantry
                     loadIngredients();
 
                 } else {
@@ -410,10 +544,37 @@ public class MainActivity extends AppCompatActivity
 
         if (itemId == R.id.menu_pantry) {
 
+            // Closing the search
+            etSearchIngredient.setText("");
+
+            // Removing focus from search
+            etSearchIngredient.clearFocus();
+
+            // Hiding the keyboard
+            InputMethodManager keyboard =
+                    (InputMethodManager)
+                            getSystemService(
+                                    Context.INPUT_METHOD_SERVICE
+                            );
+
+            if (keyboard != null) {
+
+                keyboard.hideSoftInputFromWindow(
+                        etSearchIngredient.getWindowToken(),
+                        0
+                );
+            }
+
+            // Hiding Home button
+            btnHome.setVisibility(
+                    View.GONE
+            );
+
             return true;
 
         } else if (itemId == R.id.menu_recipes) {
 
+            // Opening Recipe Suggestions
             Intent intent =
                     new Intent(
                             MainActivity.this,
@@ -426,6 +587,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (itemId == R.id.menu_settings) {
 
+            // Opening Settings
             Intent intent =
                     new Intent(
                             MainActivity.this,
@@ -437,12 +599,15 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(
+                item
+        );
     }
 
     @Override
     protected void onDestroy() {
 
+        // Closing the database worker
         databaseExecutor.shutdown();
 
         super.onDestroy();

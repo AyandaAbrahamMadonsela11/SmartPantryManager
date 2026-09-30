@@ -4,64 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:gravity="center_vertical"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical"
+    android:padding="15dp"
     android:background="@drawable/item_background">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/txtIngredientName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_marginBottom="5dp"
+        android:text="Maize Meal"
+        android:textColor="#282828"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/txtIngredientName"
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/txtIngredientQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="Quantity: 3 kg"
+        android:textColor="#555555"
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/txtIngredientExpiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Expiry Date: 30/10/2026"
+        android:textColor="#555555"
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnEdit"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Ingredient Name"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#282828"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:text="Edit"
             tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/txtIngredientQuantity"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Quantity: 1"
-            android:layout_marginTop="4dp"
-            android:textColor="#666666"
-            android:textSize="14sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/txtIngredientExpiry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Expiry Date: 29/09/2026"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:text="Delete"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit"
-        android:textSize="14sp"
-        android:layout_marginEnd="6dp"
-        tools:ignore="HardcodedText" />
-
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"
-        android:textSize="14sp"
-        tools:ignore="HardcodedText" />
 
 </LinearLayout>
